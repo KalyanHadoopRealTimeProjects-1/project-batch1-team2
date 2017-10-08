@@ -1,0 +1,47 @@
+Hive End External Table :===>
+
+create external table olympic(
+olympic_athelete string,
+olympic_age int,
+olympic_country string,
+olympic_year string,
+olympic_closing string,
+olympic_sport string,
+olympic_gold int,
+olympic_silver int,
+olympic_bronze int, 
+olympic_total int
+)
+row format delimited
+fields terminated by '\t'
+stored as textfile
+location '/data/olympic/'
+
+
+PIG End :
+
+A = LOAD 'hivehbasepigdb.olympic' USING org.apache.hive.hcatalog.pig.HCatLoader();
+describe A;
+B= LIMIT A 2;
+
+Store Into Hive Anothe table  :::===>
+
+create  table olympic_pig_store(
+olympic_athelete string,
+olympic_age int,
+olympic_country string,
+olympic_year string,
+olympic_closing string,
+olympic_sport string,
+olympic_gold int,
+olympic_silver int,
+olympic_bronze int, 
+olympic_total int
+)
+row format delimited
+fields terminated by '\t'
+stored as textfile
+
+
+STORE B INTO 'hivehbasepigdb.olympic_pig_store' USING org.apache.hive.hcatalog.pig.HCatStorer();
+
