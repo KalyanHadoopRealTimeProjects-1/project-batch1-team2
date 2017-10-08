@@ -1,0 +1,34 @@
+create 'student_hbase', 'cf1'
+put 'student_hbase','r1', 'cf1:name', 'sai'
+put 'student_hbase','r1', 'cf1:id', 10
+put 'student_hbase','r1', 'cf1:course', 'Master'
+put 'student_hbase','r1', 'cf1:year', 2010
+
+
+hbase(main):018:0> disable 'student_hbase'
+0 row(s) in 2.8020 seconds
+
+hbase(main):019:0> drop 'student_hbase'
+0 row(s) in 1.3860 seconds
+
+
+
+
+CREATE EXTERNAL TABLE student_hive(
+key string,
+name string,
+id int,
+course string,
+year int
+)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES("hbase.columns.mapping" = ":key,cf1:name,cf1:id,cf1:course,cf1:year")
+TBLPROPERTIES ("hbase.table.name"="student_hbase");
+
+o/p
+
+hive> select * from student_hive;
+OK
+r1      sai     10      Master  2010
+Time taken: 0.306 seconds, Fetched: 1 row(s)
+hive>
