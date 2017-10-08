@@ -1,0 +1,27 @@
+
+
+create table stundetInfo (
+name string,
+id int,
+course string,
+year int
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+LOCATION '/data/hivepig_works/'
+
+create table stundetInfo_orc (
+name string,
+id int,
+course string,
+year int
+)
+STORED AS ORC;
+
+
+
+-- Copy to ORC table
+INSERT INTO TABLE stundetInfo_orc SELECT * FROM stundetInfo;
+
+insert overwrite directory '/data/temp/' ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TEXTFILE select * from stundetInfo_orc;
