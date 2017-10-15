@@ -1,0 +1,8 @@
+hadoop fs -put student1.csv /data/student1.csv
+
+
+create 'student1_csv','cf'
+
+hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=, -Dimporttsv.columns=HBASE_ROW_KEY,
+cf:c2,cf:c1,cf:c3,cf:c4 student1_csv /data/student1.csv
+
