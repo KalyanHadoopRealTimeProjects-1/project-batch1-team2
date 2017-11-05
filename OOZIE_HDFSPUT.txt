@@ -24,10 +24,10 @@ workflow.xml
         <shell xmlns="uri:oozie:shell-action:0.1">
             <job-tracker>${jobTracker}</job-tracker>
             <name-node>${nameNode}</name-node>
-            <exec>/user/cloudera/oozieScript.sh</exec>
+            <exec>/user/cloudera/hdfsput.sh</exec>
               <argument>${source}</argument>
               <argument>${target}</argument>
-          <file>/user/cloudera/oozieScript.sh</file>
+          <file>/user/cloudera/hdfsput.sh</file>
               <capture-output/>
         </shell>
         <ok to="End"/>
