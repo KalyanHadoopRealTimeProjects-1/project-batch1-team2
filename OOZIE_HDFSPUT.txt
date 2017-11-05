@@ -1,0 +1,43 @@
+job.properties
+================================
+
+oozie.use.system.libpath=True
+send_email=False
+dryrun=False
+nameNode=hdfs://quickstart.cloudera:8020
+jobTracker=localhost:8032
+security_enabled=False
+source=/data/abc.txt
+target=/data/
+
+
+
+workflow.xml
+=====================
+
+<workflow-app name="My Workflow" xmlns="uri:oozie:workflow:0.5">
+    <start to="shell-fb65"/>
+    <kill name="Kill">
+        <message>Action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <action name="shell-fb65">
+        <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <exec>/user/cloudera/oozieScript.sh</exec>
+              <argument>${source}</argument>
+              <argument>${target}</argument>
+          <file>/user/cloudera/oozieScript.sh</file>
+              <capture-output/>
+        </shell>
+        <ok to="End"/>
+        <error to="Kill"/>
+    </action>
+    <end name="End"/>
+</workflow-app>
+
+
+sh hdfsput.sh
+=========================================
+#!/bin/bash
+hadoop fs -put $1 $2
