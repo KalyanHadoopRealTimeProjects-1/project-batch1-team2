@@ -1,0 +1,90 @@
+
+
+Cloudera : unset FLUME_HOME
+
+=================================
+
+Step1 ) Be Ready with Flume Agent
+
+Here We need to create fluem log conf.
+=========================================log-agent.conf============================
+
+log-agent.sources = execsource
+log-agent.channels =MemChannel
+log-agent.sinks = HDFS
+
+log-agent.sources.execsource.type = exec
+log-agent.sources.execsource.command = tail -F /home/orienit/UseCase/productlog.csv
+log-agent.sources.execsource.channels = MemChannel
+
+log-agent.sinks.HDFS.type = hdfs
+log-agent.sinks.HDFS.channel = MemChannel
+log-agent.sinks.HDFS.hdfs.path =hdfs://quickstart.cloudera:8020/data/output/logs/%Y-%m-%d/%H/%M
+log-agent.sinks.HDFS.hdfs.fileType = DataStream
+log-agent.sinks.HDFS.hdfs.writeFormat = Text
+log-agent.sinks.HDFS.hdfs.filePrefix = ABC
+log-agent.sinks.HDFS.hdfs.fileSuffix = .log
+log-agent.sinks.HDFS.hdfs.batchSize = 100
+log-agent.sinks.HDFS.hdfs.rollSize = 0
+log-agent.sinks.HDFS.hdfs.rollCount = 100
+log-agent.sinks.HDFS.hdfs.useLocalTimeStamp = true
+
+
+log-agent.channels.MemChannel.type = memory
+log-agent.channels.MemChannel.capacity = 1000
+log-agent.channels.MemChannel.transactionCapacity = 100
+
+=====================================================================================
+
+Step 2 : RUn the Flume agent 
+
+Ex:  flume-ng agent -n log-agent -f log-agent.conf -Dflume.root.logger=DEBUG,console
+
+########################################################################################################
+
+Step 3: ) Run the WebServer (Here Run the below jar)
+Ex: 
+java -cp kalyan-bigdata-examples.jar \
+com.orienit.kalyan.examples.GenerateProductLog \
+-f productlog.csv \
+-d ',' \
+-n 10 \
+-l 20
+
+########################################################################################################
+
+Step 4 ) Check the HDFS Data 
+
+[orienit@quickstart UseCase]$ hadoop fs -ls /data/output/
+Found 3 items
+-rw-r--r--   1 orienit supergroup        879 2017-11-11 17:35 /data/output/ABC.1510401912038.log
+-rw-r--r--   1 orienit supergroup       1703 2017-11-11 17:36 /data/output/ABC.1510401976412.log
+-rw-r--r--   1 orienit supergroup       1741 2017-11-11 17:38 /data/output/ABC.1510402076346.log
+[orienit@quickstart UseCase]$ 
+
+
+########################################################################################################
+
+
+
+
+create external table users1(
+userid string,
+username string,
+password string,
+email string,
+country string,
+state string,
+city string,
+dt string
+)partitioned by
+( data_date string,
+  hour string,
+  minute string)
+row format delimited
+fields terminated by ','
+location '/data/output/logs'
+
+
+
+
