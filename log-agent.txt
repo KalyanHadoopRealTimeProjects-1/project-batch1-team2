@@ -1,0 +1,19 @@
+log-agent.sources = execsource
+log-agent.sinks = filesink
+log-agent.channels = filechannel
+
+
+log-agent.sources.execsource.type = exec
+log-agent.sources.execsource.command = tail -F /home/orienit/work/hadoop-2.6.0/logs/hadoop-hadoop-namenode-hadoop.log
+log-agent.sources.execsource.channels = filechannel
+
+
+log-agent.sinks.filesink.type = FILE_ROLL
+log-agent.sinks.filesink.sink.directory = /home/orienit/work/flume-test/files
+log-agent.sinks.filesink.sink.rollInterval = 0
+log-agent.sinks.filesink.channel = filechannel
+
+
+log-agent.channels.filechannel.type = file
+log-agent.channels.filechannel.checkpointDir = /home/orienit/work/flume-test/fc/checkpoint
+log-agent.channels.filechannel.dataDirs = /home/orienit/work/flume-test/fc/data
